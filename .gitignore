@@ -1,0 +1,39 @@
+# compile
+*.exe
+*.out
+*.so
+*.dll
+*.dylib
+
+vendor/
+
+# temporary
+*.log
+*.tmp
+*.swp
+
+
+bin/
+pkg/
+obj/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# environment
+.env
+.env.local
+config.json
+secrets.yaml
+
+# MAC
+.DS_Store
+Thumbs.db
+
+# db-data
+db-data/
+
+# app binary
+myapp
