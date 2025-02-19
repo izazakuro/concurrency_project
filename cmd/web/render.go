@@ -11,11 +11,11 @@ var pathToTemplates = "./cmd/web/templates"
 
 type TemplateData struct {
 	StringMap     map[string]string
-	IntMap        map[string]string
-	FloatMap      map[string]string
+	IntMap        map[string]int
+	FloatMap      map[string]float64
 	Data          map[string]any
 	Flash         string
-	Warining      string
+	Warning       string
 	Error         string
 	Authenticated bool
 	Now           time.Time
@@ -58,7 +58,7 @@ func (app *Config) render(w http.ResponseWriter, r *http.Request, t string, td *
 
 func (app *Config) AddDefaultData(td *TemplateData, r *http.Request) *TemplateData {
 	td.Flash = app.Session.PopString(r.Context(), "flash")
-	td.Warining = app.Session.PopString(r.Context(), "warning")
+	td.Warning = app.Session.PopString(r.Context(), "warning")
 	td.Error = app.Session.PopString(r.Context(), "error")
 	if app.IsAuthenticated(r) {
 		td.Authenticated = true
