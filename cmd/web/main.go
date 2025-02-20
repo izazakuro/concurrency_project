@@ -1,12 +1,16 @@
 package main
 
 import (
+	"concurrency_project/data"
 	"database/sql"
+	"encoding/gob"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/alexedwards/scs/redisstore"
@@ -44,9 +48,13 @@ func main() {
 		InfoLog:  infoLog,
 		ErrorLog: errorLog,
 		Wait:     &wg,
+		Models:   data.New(db),
 	}
 
 	// Set up Mail
+
+	// listen for signals
+	go app.listenForShutdown()
 
 	// Listen and Serve
 	app.serve()
@@ -122,6 +130,9 @@ func openDB(dsn string) (*sql.DB, error) {
 // Create Session
 
 func initSession() *scs.SessionManager {
+
+	gob.Register(data.User{})
+
 	// set up session
 	session := scs.New()
 
@@ -145,4 +156,22 @@ func initRedis() *redis.Pool {
 	}
 
 	return redisPool
+}
+
+func (app *Config) listenForShutdown() {
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	app.shutdown()
+	os.Exit(0)
+}
+
+func (app *Config) shutdown() {
+
+	app.InfoLog.Println("run cleanup tasks")
+
+	app.Wait.Wait()
+
+	app.InfoLog.Println("closing channels and shutting down app...")
+
 }
