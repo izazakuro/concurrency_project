@@ -37,3 +37,7 @@ db-data/
 
 # app binary
 myapp
+
+node_modules/
+
+pdf/
